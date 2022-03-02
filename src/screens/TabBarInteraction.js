@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Pressable, Image } from 'react-native';
+import { StyleSheet, View, Pressable, Image } from 'react-native';
 import Animated, {
    useSharedValue,
    useAnimatedStyle,
@@ -14,26 +14,19 @@ import Icon from '../components/common/Icon';
 
 const AnimatedButton = Animated.createAnimatedComponent(Pressable);
 
-const IconsComponent = ({ iconsValue, index, item }) => {
+const IconsComponent = ({ iconsValue, index, item, delay = 50 }) => {
    const iconsDerivedValue = useDerivedValue(() => {
-      return withDelay(index * 50, withSpring(iconsValue.value));
-   });
-
-   const top_interpolate = useDerivedValue(() => {
-      return interpolate(iconsDerivedValue.value, [0, 1], [80, 0]);
-   });
-
-   const opacity_interpolate = useDerivedValue(() => {
-      return interpolate(iconsDerivedValue.value, [0, 1], [0, 1]);
+      return withDelay(index * delay, withSpring(iconsValue.value));
    });
 
    const animatedStyle = useAnimatedStyle(() => {
       return {
          marginTop: 4,
-         top: top_interpolate.value,
-         opacity: opacity_interpolate.value,
+         top: interpolate(iconsDerivedValue.value, [0, 1], [80, 0]),
+         opacity: interpolate(iconsDerivedValue.value, [0, 1], [0, 1]),
       };
    });
+
    return (
       <Animated.View style={[styles.icon, animatedStyle]}>
          <Icon name={item.icon} size={30} resizeMode='contain' />
@@ -54,35 +47,14 @@ const TabBarInteraction = () => {
       };
    });
 
-   const opacity_interpolate = useDerivedValue(() => {
-      return interpolate(contHeightValue.value, [0, 1], [1, 0]);
-   });
-
-   const rotate_interpolate = useDerivedValue(() => {
-      return interpolate(contHeightValue.value, [0, 1], [0, 134]);
-   });
-
-   const backgroundColor_interpolate = useDerivedValue(() => {
-      return interpolateColor(contHeightValue.value, [0, 1], ['#C3FDC0', '#C8EFB7']);
-   });
-
-   const scale_circle_interpolate = useDerivedValue(() => {
-      return interpolate(circleValue.value, [0, 0.3], [0, 1]);
-   });
-
-   const opacity_circle_interpolate = useDerivedValue(() => {
-      return interpolate(circleValue.value, [0, 1], [1, 0]);
-   });
-
    const iconPlusStyle = useAnimatedStyle(() => {
       return {
          position: 'absolute',
          bottom: 12,
-         // opacity: opacity_interpolate.value,
-         backgroundColor: backgroundColor_interpolate.value,
+         backgroundColor: interpolateColor(contHeightValue.value, [0, 1], ['#C3FDC0', '#C8EFB7']),
          transform: [
             {
-               rotate: `${rotate_interpolate.value}deg`,
+               rotate: `${interpolate(contHeightValue.value, [0, 1], [0, 134])}deg`,
             },
          ],
       };
@@ -92,29 +64,31 @@ const TabBarInteraction = () => {
       return {
          transform: [
             {
-               scale: scale_circle_interpolate.value,
+               scale: interpolate(circleValue.value, [0, 0.3], [0, 1]),
             },
          ],
-         opacity: opacity_circle_interpolate.value,
+         opacity: interpolate(circleValue.value, [0, 1], [1, 0]),
       };
    });
+
    const onFocus = () => {
       setfirst(false);
       contHeightValue.value = withTiming(1, { duration: 300 });
       iconsValue.value = withTiming(1, { duration: 50 });
-      circleValue.value = withTiming(1, { duration: 300 });
+      circleValue.value = withTiming(1, { duration: 300 }, () => {
+         circleValue.value = 0;
+      });
    };
 
    const onBlur = () => {
       contHeightValue.value = withTiming(0, { duration: 250 });
       iconsValue.value = withTiming(0, { duration: 1 });
-      circleValue.value = 0;
       if (!first) {
          setfirst(true);
       }
    };
    return (
-      <View style={styles.container}>
+      <Pressable style={styles.container} onPress={onBlur}>
          <AnimatedButton style={[styles.button, contHeightStyle]} onPress={onFocus}>
             <View style={{ marginTop: 10 }}>
                {[{ icon: 'chat' }, { icon: 'chat' }].map((item, index) => {
@@ -127,16 +101,12 @@ const TabBarInteraction = () => {
             </Animated.View>
          </AnimatedButton>
          <Animated.View style={[styles.circle, iconCircleStyle]} />
-         <Pressable onPress={onBlur}>
-            <Image
-               source={require('../../assets/navigation.png')}
-               resizeMode='contain'
-               style={styles.image}
-            />
-         </Pressable>
-
-         {/* <Pressable onPress={onBlur} style={styles.onBlur} /> */}
-      </View>
+         <Image
+            source={require('../../assets/navigation.png')}
+            resizeMode='contain'
+            style={styles.image}
+         />
+      </Pressable>
    );
 };
 
