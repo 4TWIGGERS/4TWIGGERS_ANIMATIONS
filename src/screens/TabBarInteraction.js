@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, View, Pressable, Image } from 'react-native';
 import Animated, {
    useSharedValue,
@@ -11,6 +11,7 @@ import Animated, {
    interpolateColor,
 } from 'react-native-reanimated';
 import Icon from '../components/common/Icon';
+import DSS from '../styles/DSS';
 
 const AnimatedButton = Animated.createAnimatedComponent(Pressable);
 
@@ -42,7 +43,8 @@ const TabBarInteraction = () => {
    const contHeightValue = useSharedValue(0);
    const iconsValue = useSharedValue(0);
    const circleValue = useSharedValue(0);
-   const [first, setfirst] = useState(true);
+   const backgroundColorValue = useSharedValue(0);
+   const plusLineColor = useSharedValue(0);
 
    const contHeightStyle = useAnimatedStyle(() => {
       const contHeight = interpolate(contHeightValue.value, [0, 1], [110, 300]);
@@ -55,12 +57,21 @@ const TabBarInteraction = () => {
       return {
          position: 'absolute',
          bottom: 12,
-         backgroundColor: interpolateColor(contHeightValue.value, [0, 1], ['#C3FDC0', '#C8EFB7']),
+         backgroundColor: interpolateColor(
+            backgroundColorValue.value,
+            [0, 1],
+            ['#C3FDC0', '#C8EFB7']
+         ),
          transform: [
             {
                rotate: `${interpolate(contHeightValue.value, [0, 1], [0, 134])}deg`,
             },
          ],
+      };
+   });
+   const iconPlusLineStyle = useAnimatedStyle(() => {
+      return {
+         backgroundColor: interpolateColor(plusLineColor.value, [0, 1], ['black', '#F36C65']),
       };
    });
 
@@ -76,39 +87,35 @@ const TabBarInteraction = () => {
    });
 
    const onFocus = () => {
-      setfirst(false);
       contHeightValue.value = withTiming(1, { duration: 300 });
       iconsValue.value = withTiming(1, { duration: 50 });
       circleValue.value = withTiming(1, { duration: 300 });
+      backgroundColorValue.value = withTiming(1, { duration: 700 });
+      plusLineColor.value = withTiming(1, { duration: 300 });
    };
 
    const onBlur = () => {
       contHeightValue.value = withTiming(0, { duration: 250 });
       iconsValue.value = withTiming(0, { duration: 1 });
+      backgroundColorValue.value = withTiming(0, { duration: 1000 });
+      plusLineColor.value = withTiming(0, { duration: 600 });
       circleValue.value = 0;
-      if (!first) {
-         setfirst(true);
-      }
    };
    return (
       <Pressable style={styles.container} onPress={onBlur}>
          <AnimatedButton style={[styles.button, contHeightStyle]} onPress={onFocus}>
-            <View style={{ marginTop: 10 }}>
+            <View style={DSS.mt10}>
                {[{ icon: 'chat' }, { icon: 'chat' }].map((item, index) => {
                   return <IconsComponent key={index} {...{ iconsValue, index, item }} />;
                })}
             </View>
             <Animated.View style={[styles.plusCont, iconPlusStyle]}>
-               <View style={[styles.plusLine1, { backgroundColor: first ? 'black' : '#F36C65' }]} />
-               <View style={[styles.plusLine, { backgroundColor: first ? 'black' : '#F36C65' }]} />
+               <Animated.View style={[styles.plusLine1, iconPlusLineStyle]} />
+               <Animated.View style={[styles.plusLine, iconPlusLineStyle]} />
             </Animated.View>
          </AnimatedButton>
          <Animated.View style={[styles.circle, iconCircleStyle]} />
-         <Image
-            source={require('../../assets/navigation.png')}
-            resizeMode='contain'
-            style={styles.image}
-         />
+         <Icon name='navigation' style={styles.image} resizeMode='contain' />
       </Pressable>
    );
 };
@@ -165,7 +172,7 @@ const styles = StyleSheet.create({
    },
    image: {
       width: 560,
-      height: 200,
+      height: 130,
    },
    plusLine: {
       position: 'absolute',
@@ -182,6 +189,7 @@ const styles = StyleSheet.create({
       width: 30,
       height: 4,
       borderRadius: 4,
+      backgroundColor: 'black',
    },
    plusCont: {
       width: 85,
