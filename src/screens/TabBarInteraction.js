@@ -75,14 +75,13 @@ const TabBarInteraction = () => {
       setfirst(false);
       contHeightValue.value = withTiming(1, { duration: 300 });
       iconsValue.value = withTiming(1, { duration: 50 });
-      circleValue.value = withTiming(1, { duration: 300 }, () => {
-         circleValue.value = 0;
-      });
+      circleValue.value = withTiming(1, { duration: 300 });
    };
 
    const onBlur = () => {
       contHeightValue.value = withTiming(0, { duration: 250 });
       iconsValue.value = withTiming(0, { duration: 1 });
+      circleValue.value = 0;
       if (!first) {
          setfirst(true);
       }
