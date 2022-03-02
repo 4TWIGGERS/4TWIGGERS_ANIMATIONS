@@ -22,7 +22,11 @@ const IconsComponent = ({ iconsValue, index, item, delay = 50 }) => {
    const animatedStyle = useAnimatedStyle(() => {
       return {
          marginTop: 4,
-         top: interpolate(iconsDerivedValue.value, [0, 1], [80, 0]),
+         transform: [
+            {
+               translateY: interpolate(iconsDerivedValue.value, [0, 1], [80, 0]),
+            },
+         ],
          opacity: interpolate(iconsDerivedValue.value, [0, 1], [0, 1]),
       };
    });
