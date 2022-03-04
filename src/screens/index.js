@@ -1,2 +1,4 @@
 import TabBarInteraction from './TabBarInteraction';
-export { TabBarInteraction };
+import AnimationSwitcher from './AnimationSwitcher';
+
+export { TabBarInteraction, AnimationSwitcher };

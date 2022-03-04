@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Pressable, Image } from 'react-native';
+import { StyleSheet, View, Pressable } from 'react-native';
 import Animated, {
    useSharedValue,
    useAnimatedStyle,
@@ -10,12 +10,12 @@ import Animated, {
    interpolate,
    interpolateColor,
 } from 'react-native-reanimated';
-import Icon from '../components/common/Icon';
-import DSS from '../styles/DSS';
+import { Icon } from 'components/common';
+import { DSS } from 'styles';
 
 const AnimatedButton = Animated.createAnimatedComponent(Pressable);
 
-const IconsComponent = ({ iconsValue, index, item, delay = 50 }) => {
+const IconsComponent = ({ iconsValue, index, item, delay = 50, size = 32 }) => {
    const iconsDerivedValue = useDerivedValue(() => {
       return withDelay(index * delay, withSpring(iconsValue.value));
    });
@@ -34,7 +34,7 @@ const IconsComponent = ({ iconsValue, index, item, delay = 50 }) => {
 
    return (
       <Animated.View style={[styles.icon, animatedStyle]}>
-         <Icon name={item.icon} size={30} resizeMode='contain' />
+         <Icon name={item.icon} size={size} resizeMode='contain' />
       </Animated.View>
    );
 };
@@ -89,7 +89,7 @@ const TabBarInteraction = () => {
    const onFocus = () => {
       contHeightValue.value = withTiming(1, { duration: 300 });
       iconsValue.value = withTiming(1, { duration: 50 });
-      circleValue.value = withTiming(1, { duration: 300 });
+      circleValue.value = withTiming(1, { duration: 300 }, () => {});
       backgroundColorValue.value = withTiming(1, { duration: 700 });
       plusLineColor.value = withTiming(1, { duration: 300 });
    };
@@ -104,8 +104,8 @@ const TabBarInteraction = () => {
    return (
       <Pressable style={styles.container} onPress={onBlur}>
          <AnimatedButton style={[styles.button, contHeightStyle]} onPress={onFocus}>
-            <View style={DSS.mt10}>
-               {[{ icon: 'chat' }, { icon: 'chat' }].map((item, index) => {
+            <View style={[DSS.mt10, { zIndex: -3 }]}>
+               {[{ icon: 'voice' }, { icon: 'chat' }].map((item, index) => {
                   return <IconsComponent key={index} {...{ iconsValue, index, item }} />;
                })}
             </View>
@@ -113,6 +113,7 @@ const TabBarInteraction = () => {
                <Animated.View style={[styles.plusLine1, iconPlusLineStyle]} />
                <Animated.View style={[styles.plusLine, iconPlusLineStyle]} />
             </Animated.View>
+            <View style={styles.fake} />
          </AnimatedButton>
          <Animated.View style={[styles.circle, iconCircleStyle]} />
          <Icon name='navigation' style={styles.image} resizeMode='contain' />
@@ -134,10 +135,10 @@ const styles = StyleSheet.create({
       backgroundColor: '#C3FDC0',
       alignItems: 'center',
       position: 'absolute',
-      bottom: '47.3%',
+      bottom: '47.8%',
       overflow: 'hidden',
       zIndex: 1000,
-      marginLeft: 1.8,
+      marginLeft: 2,
    },
 
    onBlur: {
@@ -197,6 +198,14 @@ const styles = StyleSheet.create({
       borderRadius: 100,
       alignItems: 'center',
       justifyContent: 'center',
+   },
+   fake: {
+      width: 100,
+      height: 60,
+      position: 'absolute',
+      bottom: 0,
+      zIndex: -1,
+      backgroundColor: '#C3FDC0',
    },
 });
 
