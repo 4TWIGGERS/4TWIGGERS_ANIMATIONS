@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Animated, {
    useSharedValue,
    withSpring,
@@ -8,8 +9,7 @@ import Animated, {
    interpolate,
 } from 'react-native-reanimated';
 import { PanGestureHandler } from 'react-native-gesture-handler';
-import { StyleSheet, View, Pressable, Image } from 'react-native';
-import { useState } from 'react';
+import { StyleSheet, View, Pressable } from 'react-native';
 
 const AnimatedButton = Animated.createAnimatedComponent(Pressable);
 
@@ -27,20 +27,17 @@ const MicroInteraction = () => {
    const knobY = useSharedValue(0);
    const decrementContScale = useSharedValue(1);
    const incrementContScale = useSharedValue(1);
-   const isVerticalGesture = useSharedValue(0);
+   const incrementDecrementGesture = useSharedValue(0);
 
    const gestureHandler = useAnimatedGestureHandler({
-      onStart: (_, ctx) => {
+      onStart: (event, ctx) => {
          ctx.startX = wrapperX.value;
          ctx.startY = wrapperY.value;
-         ctx.direction = undefined;
+         ctx.direction = Math.abs(event.velocityX) > Math.abs(event.velocityY) ? 'x' : 'y';
       },
       onActive: (event, ctx) => {
-         if (ctx.direction === undefined) {
-            ctx.direction = Math.abs(event.velocityX) > Math.abs(event.velocityY) ? 'x' : 'y';
-         }
          if (ctx.direction === 'y') {
-            isVerticalGesture.value = withTiming(1);
+            incrementDecrementGesture.value = withTiming(1);
             wrapperY.value = interpolate(
                event.translationY,
                [0, WRAPPER_HEIGHT],
@@ -80,7 +77,7 @@ const MicroInteraction = () => {
          if (ctx.direction === 'y') {
             wrapperY.value = withSpring(0);
             knobY.value = withSpring(0);
-            isVerticalGesture.value = withTiming(0);
+            incrementDecrementGesture.value = withTiming(0);
             runOnJS(setCount)(initialState);
          } else if (ctx.direction === 'x') {
             wrapperX.value = withSpring(0);
@@ -118,10 +115,10 @@ const MicroInteraction = () => {
       return {
          transform: [
             {
-               translateX: interpolate(isVerticalGesture.value, [0, 1], [0, 157]),
+               translateX: interpolate(incrementDecrementGesture.value, [0, 1], [0, 157]),
             },
             {
-               rotate: `${interpolate(isVerticalGesture.value, [0, 1], [0, 314])}deg`,
+               rotate: `${interpolate(incrementDecrementGesture.value, [0, 1], [0, 314])}deg`,
             },
          ],
       };
@@ -131,20 +128,20 @@ const MicroInteraction = () => {
       return {
          transform: [
             {
-               translateX: interpolate(isVerticalGesture.value, [0, 1], [0, -157]),
+               translateX: interpolate(incrementDecrementGesture.value, [0, 1], [0, -157]),
             },
             {
-               rotate: `${interpolate(isVerticalGesture.value, [0, 1], [0, 224])}deg`,
+               rotate: `${interpolate(incrementDecrementGesture.value, [0, 1], [0, 224])}deg`,
             },
          ],
       };
    });
-   const incrementStyle1 = useAnimatedStyle(() => {
+   const incrementVerticalPartStyle = useAnimatedStyle(() => {
       return {
-         opacity: interpolate(isVerticalGesture.value, [0, 1], [1, 0]),
+         opacity: interpolate(incrementDecrementGesture.value, [0, 1], [1, 0]),
          transform: [
             {
-               translateY: interpolate(isVerticalGesture.value, [0, 1], [0, 100]),
+               translateY: interpolate(incrementDecrementGesture.value, [0, 1], [0, 100]),
             },
          ],
       };
@@ -188,7 +185,7 @@ const MicroInteraction = () => {
                      style={[styles.iconWrapper, incrementContStyle]}
                      onPress={() => setCount((count) => count + 1)}>
                      <Animated.View style={[styles.iconInc, incrementStyle]} />
-                     <Animated.View style={[styles.iconDec2, incrementStyle1]} />
+                     <Animated.View style={[styles.iconIncVertical, incrementVerticalPartStyle]} />
                   </AnimatedButton>
                </View>
                <Animated.View style={[styles.knob, knobStyle]}>
@@ -225,9 +222,6 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
    },
-   knob1: {
-      position: 'absolute',
-   },
    actionButtonsContainer: {
       flex: 1,
       flexDirection: 'row',
@@ -255,7 +249,7 @@ const styles = StyleSheet.create({
       borderRadius: 4,
       backgroundColor: '#051730',
    },
-   iconDec2: {
+   iconIncVertical: {
       position: 'absolute',
       width: 4,
       height: 42,
@@ -266,12 +260,6 @@ const styles = StyleSheet.create({
       color: '#051730',
       fontSize: 56,
       fontWeight: '500',
-   },
-   wrapperIcon: {
-      width: WRAPPER_WIDTH,
-      height: 220,
-      zIndex: -10,
-      position: 'absolute',
    },
 });
 
