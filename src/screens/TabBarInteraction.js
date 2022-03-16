@@ -15,7 +15,7 @@ import { DSS } from 'styles';
 
 const AnimatedButton = Animated.createAnimatedComponent(Pressable);
 
-const IconsComponent = ({ iconsValue, index, item, delay = 50, size = 32 }) => {
+const IconsComponent = ({ iconsValue, index, item, delay = 50, size = 26 }) => {
    const iconsDerivedValue = useDerivedValue(() => {
       return withDelay(index * delay, withSpring(iconsValue.value));
    });
@@ -47,7 +47,7 @@ const TabBarInteraction = () => {
    const plusLineColor = useSharedValue(0);
 
    const contHeightStyle = useAnimatedStyle(() => {
-      const contHeight = interpolate(contHeightValue.value, [0, 1], [110, 300]);
+      const contHeight = interpolate(contHeightValue.value, [0, 1], [60, 160]);
       return {
          height: contHeight,
       };
@@ -56,7 +56,7 @@ const TabBarInteraction = () => {
    const iconPlusStyle = useAnimatedStyle(() => {
       return {
          position: 'absolute',
-         bottom: 12,
+         bottom: 8.5,
          backgroundColor: interpolateColor(
             backgroundColorValue.value,
             [0, 1],
@@ -104,7 +104,7 @@ const TabBarInteraction = () => {
    return (
       <Pressable style={styles.container} onPress={onBlur}>
          <AnimatedButton style={[styles.button, contHeightStyle]} onPress={onFocus}>
-            <View style={[DSS.mt10, { zIndex: -3 }]}>
+            <View style={[DSS.mt10, { zIndex: -1 }]}>
                {[{ icon: 'voice' }, { icon: 'chat' }].map((item, index) => {
                   return <IconsComponent key={index} {...{ iconsValue, index, item }} />;
                })}
@@ -116,7 +116,7 @@ const TabBarInteraction = () => {
             <View style={styles.fake} />
          </AnimatedButton>
          <Animated.View style={[styles.circle, iconCircleStyle]} />
-         <Icon name='navigation' style={styles.image} resizeMode='contain' />
+         <Icon name='navigation' size={300} resizeMode='contain' />
       </Pressable>
    );
 };
@@ -129,13 +129,13 @@ const styles = StyleSheet.create({
       backgroundColor: 'black',
    },
    button: {
-      width: 110,
-      height: 110,
+      width: 60,
+      height: 60,
       borderRadius: 100,
       backgroundColor: '#C3FDC0',
       alignItems: 'center',
       position: 'absolute',
-      bottom: '47.8%',
+      bottom: '48.7%',
       overflow: 'hidden',
       zIndex: 1000,
       marginLeft: 2,
@@ -154,8 +154,8 @@ const styles = StyleSheet.create({
       color: 'white',
    },
    icon: {
-      width: 85,
-      height: 85,
+      width: 40,
+      height: 40,
       backgroundColor: '#B2E7B0',
       borderRadius: 100,
       marginBottom: 6,
@@ -171,14 +171,11 @@ const styles = StyleSheet.create({
       bottom: '50%',
       zIndex: 1000,
    },
-   image: {
-      width: 560,
-      height: 130,
-   },
+
    plusLine: {
       position: 'absolute',
-      width: 30,
-      height: 4,
+      width: 16,
+      height: 3,
       transform: [
          {
             rotate: 90 + 'deg',
@@ -187,21 +184,21 @@ const styles = StyleSheet.create({
       borderRadius: 4,
    },
    plusLine1: {
-      width: 30,
-      height: 4,
-      borderRadius: 4,
+      width: 16,
+      height: 3,
+      borderRadius: 3,
       backgroundColor: 'black',
    },
    plusCont: {
-      width: 85,
-      height: 85,
+      width: 40,
+      height: 40,
       borderRadius: 100,
       alignItems: 'center',
       justifyContent: 'center',
    },
    fake: {
       width: 100,
-      height: 60,
+      height: 40,
       position: 'absolute',
       bottom: 0,
       zIndex: -1,
