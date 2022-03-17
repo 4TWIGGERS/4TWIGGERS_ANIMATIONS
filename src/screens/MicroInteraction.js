@@ -30,12 +30,16 @@ const MicroInteraction = () => {
    const incrementDecrementGesture = useSharedValue(0);
 
    const gestureHandler = useAnimatedGestureHandler({
-      onStart: (event, ctx) => {
+      onStart: (_, ctx) => {
          ctx.startX = wrapperX.value;
          ctx.startY = wrapperY.value;
-         ctx.direction = Math.abs(event.velocityX) > Math.abs(event.velocityY) ? 'x' : 'y';
+         ctx.direction = undefined;
       },
       onActive: (event, ctx) => {
+         if (ctx.direction === undefined) {
+            ctx.direction = Math.abs(event.velocityX) > Math.abs(event.velocityY) ? 'x' : 'y';
+         }
+
          if (ctx.direction === 'y') {
             incrementDecrementGesture.value = withTiming(1);
             wrapperY.value = interpolate(
@@ -208,7 +212,7 @@ const styles = StyleSheet.create({
       width: WRAPPER_WIDTH,
       height: WRAPPER_HEIGHT,
       borderRadius: 52,
-      backgroundColor: '#448DFD',
+      backgroundColor: '#9992F8',
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
