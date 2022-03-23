@@ -11,6 +11,7 @@ module.exports = function (api) {
                   components: './src/components',
                   consts: './src/consts',
                   styles: './src/styles',
+                  rubberSlider: './src/components/rubberSlider',
                },
             },
          ],

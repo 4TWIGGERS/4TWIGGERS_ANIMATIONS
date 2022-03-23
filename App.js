@@ -1,11 +1,13 @@
 import { StyleSheet, View } from 'react-native';
 import { TabBarInteraction, MicroInteraction } from './src/screens';
+import RubberSlider from './src/screens/RubberSlider';
 
 export default function App() {
    return (
       <View style={styles.container}>
-         {/* {<TabBarInteraction />} */}
          <MicroInteraction />
+         {/* {<TabBarInteraction />} */}
+         {/* <RubberSlider /> */}
       </View>
    );
 }
