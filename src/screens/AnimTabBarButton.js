@@ -10,15 +10,15 @@ import Animated, {
 import { DSS } from 'styles';
 
 const MARGIN_LEFT = 72;
-const LINE_WIDTHS = [MARGIN_LEFT, 66, 58];
-const STARTING_POSITION = LINE_WIDTHS[0] + MARGIN_LEFT;
-const LINES_POSITION = LINE_WIDTHS.map((item) => {
-   return (LINE_WIDTHS[0] - item) / 2;
+const LINE_WIDTH = [MARGIN_LEFT, 66, 58];
+const STARTING_POSITION = LINE_WIDTH[0] + MARGIN_LEFT;
+const LINES_POSITION = LINE_WIDTH.map((item) => {
+   return (LINE_WIDTH[0] - item) / 2;
 });
 
-const arr = [1, 2, 3].valueOf();
+const arr = new Array(3).fill('');
 
-const Pres = ({ progress, scaleValue, index }) => {
+const PresSableLines = ({ progress, scaleValue, index }) => {
    const alignItemsLines = index === 0 ? 'flex-start' : index === 1 ? 'center' : 'flex-end';
 
    const onPress = () => {
@@ -32,7 +32,7 @@ const Pres = ({ progress, scaleValue, index }) => {
       <TouchableOpacity
          onPress={onPress}
          style={[styles.viewCont, { alignItems: alignItemsLines }]}>
-         {LINE_WIDTHS.map((width, index) => (
+         {LINE_WIDTH.map((width, index) => (
             <View key={index} style={[styles.view, { width }]} />
          ))}
       </TouchableOpacity>
@@ -76,7 +76,7 @@ const AnimTabBarButton = () => {
       <View style={styles.container}>
          <Animated.View style={[styles.cont, scaleStyle]}>
             {arr.map((_, index) => {
-               return <Pres key={index} {...{ progress, scaleValue, index }} />;
+               return <PresSableLines key={index} {...{ progress, scaleValue, index }} />;
             })}
             <View style={[DSS.my40, { position: 'absolute' }]} pointerEvents='none'>
                {arr.map((_, index) => {
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
    },
    view: {
       height: 5,
-      backgroundColor: 'grey',
+      backgroundColor: '#2B2D30',
       marginTop: 9,
       borderRadius: 6,
    },
